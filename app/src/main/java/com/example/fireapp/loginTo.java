@@ -1,8 +1,5 @@
 package com.example.fireapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -17,33 +14,30 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class signup extends AppCompatActivity {
-    EditText mEmail,mPassword,mName;
-    Button mSignupBtn,mLoginbtn;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+
+public class loginTo extends AppCompatActivity {
+
+    EditText mEmail,mPassword;
+    Button mLoginbtn,mCreatebtn;
     FirebaseAuth fAuth;
     ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
-        mName= findViewById(R.id.name);
-        mEmail = findViewById(R.id.email);
-        mPassword = findViewById(R.id.password);
-        mSignupBtn = findViewById(R.id.signupbtn);
+        setContentView(R.layout.activity_login_to);
+
+        mEmail= findViewById(R.id.email);
+        mPassword= findViewById(R.id.password);
+        progressBar= findViewById(R.id.progressBar2);
+        fAuth= FirebaseAuth.getInstance();
         mLoginbtn= findViewById(R.id.loginbtn);
+        mCreatebtn = findViewById(R.id.createbtn);
 
-
-        fAuth = FirebaseAuth.getInstance();
-        progressBar = findViewById(R.id.progressbar);
-
-        if(fAuth.getCurrentUser()!= null){
-            startActivity(new Intent(getApplicationContext(),loginTo.class));
-            finish();
-        }
-
-
-        mSignupBtn.setOnClickListener(new View.OnClickListener() {
+        mLoginbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String email = mEmail.getText().toString().trim();
@@ -65,33 +59,27 @@ public class signup extends AppCompatActivity {
 
 
                 progressBar.setVisibility(View.VISIBLE);
+                //authenticate the user
 
-                // registering the user
-
-                fAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                fAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(signup.this,"User Created",Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(),loginTo.class));
-                        }else
-                        {
-                            Toast.makeText(signup.this,"Error"+task.getException(),Toast.LENGTH_SHORT).show();
+                            Toast.makeText(loginTo.this,"Logged in Succesful",Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(),MainActivity.class));
+                        }else{
+                            Toast.makeText(loginTo.this,"Error"+task.getException(),Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
-
             }
         });
-
-
-mLoginbtn.setOnClickListener(new View.OnClickListener() {
-    @Override
-    public void onClick(View view) {
-        startActivity(new Intent(getApplicationContext(),loginTo.class));
-    }
-});
-
+        mCreatebtn.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v){
+                startActivity(new Intent(getApplicationContext(),signup.class));
+            }
+        });
 
 
     }
